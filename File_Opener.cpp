@@ -1,17 +1,57 @@
+#include "File_Opener_Window.h"
 #include "File_Opener.h"
 
-File_Opener::File_Opener() : m_button("Open")
+File_Opener::File_Opener() : Gtk::Application("org.mt.fileopener.app", Gio::Application::Flags::HANDLES_OPEN) {}
+
+Glib::RefPtr<File_Opener> File_Opener::create()
 {
-    m_button.set_margin(5);
-    m_button.signal_clicked().connect(sigc::mem_fun(*this, &File_Opener::on_button_clicked));
-    set_child(m_button);
+    return Glib::make_refptr_for_instance<File_Opener>(new File_Opener());
 }
 
-File_Opener::~File_Opener() {}
-
-void File_Opener::on_button_clicked()
+File_Opener_Window *File_Opener::create_appwindow()
 {
-    char temp[] = "Where will this print?";
-    printf("%.*s\n", (int)sizeof(temp) * 8, temp);
+    auto app_window = new File_Opener_Window();
+    add_window(*app_window);
+
+    app_window->signal_hide().connect(
+        sigc::bind(
+            sigc::mem_fun(
+                *this,
+                &File_Opener::on_hide_window),
+            app_window));
+
+    return app_window;
 }
 
+void File_Opener::on_activate()
+{
+    create_appwindow()->present();
+}
+
+void File_Opener::on_open(
+    const Gio::Application::type_vec_files &files,
+    const Glib::ustring &)
+{
+    File_Opener_Window *app_window = nullptr;
+    auto windows = get_windows();
+    if(windows.size() > 0)
+    {
+        app_window = dynamic_cast<File_Opener_Window*>(windows[0]);
+    }
+    
+    if(!app_window)
+    {
+        app_window = create_appwindow();
+    }
+
+    for( const auto& file: files)
+    {
+        app_window->open_file_view(file);
+    }
+    app_window->present();
+}
+
+void File_Opener::on_hide_window(Gtk::Window *window)
+{
+    delete window;
+}

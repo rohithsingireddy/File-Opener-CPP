@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=File Opener
+GenericName=FileOpener
+Comment=App made with Gtkmm4 API
+Icon=FileOpenerIcon
+StartUpNotify=true
+Exec=@bindir@/File_Opener %U
+Categories=GNOME;GTK;Utility

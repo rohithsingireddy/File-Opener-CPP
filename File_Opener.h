@@ -1,17 +1,25 @@
 #ifndef GTK_FILE_OPENER_INCLUDE_GUARD
 #define GTK_FILE_OPENER_INCLUDE_GUARD
 
-#include <gtkmm/button.h>
-#include <gtkmm/window.h>
+#include <gtkmm/application.h>
 
-class File_Opener : public Gtk::Window
+class File_Opener_Window;
+
+class File_Opener : public Gtk::Application
 {
-public:
-    File_Opener();
-    ~File_Opener() override;
+private:
+    File_Opener_Window *create_appwindow();
+    void on_hide_window(Gtk::Window *window);
+
 protected:
-    void on_button_clicked();
-    Gtk::Button m_button;
+    File_Opener();
+    void on_activate() override;
+    void on_open(
+        const Gio::Application::type_vec_files &files,
+        const Glib::ustring &hint) override;
+
+public:
+    static Glib::RefPtr<File_Opener> create();
 };
 
-#endif
+#endif /* GTK_FILE_OPENER_INCLUDE_GUARD */
