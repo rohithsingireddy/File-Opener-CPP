@@ -1,7 +1,13 @@
-#include "File_Opener_Window.h"
-#include "File_Opener.h"
+#include <iostream>
+#include <exception>
 
-File_Opener::File_Opener() : Gtk::Application("org.mt.fileopener.app", Gio::Application::Flags::HANDLES_OPEN) {}
+#include "File_Opener.h"
+#include "File_Opener_Window.cpp"
+
+File_Opener::File_Opener()
+    : Gtk::Application(
+          "org.mt.fileopener.app",
+          Gio::Application::Flags::HANDLES_OPEN) {}
 
 Glib::RefPtr<File_Opener> File_Opener::create()
 {
@@ -10,7 +16,7 @@ Glib::RefPtr<File_Opener> File_Opener::create()
 
 File_Opener_Window *File_Opener::create_appwindow()
 {
-    auto app_window = new File_Opener_Window();
+    auto app_window = File_Opener_Window::create();
     add_window(*app_window);
 
     app_window->signal_hide().connect(
@@ -25,7 +31,18 @@ File_Opener_Window *File_Opener::create_appwindow()
 
 void File_Opener::on_activate()
 {
-    create_appwindow()->present();
+    try
+    {
+        create_appwindow()->present();
+    }
+    catch (const Glib::Error &ex)
+    {
+        std::cerr << "File_Opener::on_activate(): " << ex.what() << std::endl;
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "File_Opener::on_activate(): " << e.what() << std::endl;
+    }
 }
 
 void File_Opener::on_open(
@@ -34,21 +51,32 @@ void File_Opener::on_open(
 {
     File_Opener_Window *app_window = nullptr;
     auto windows = get_windows();
-    if(windows.size() > 0)
+    if (windows.size() > 0)
     {
-        app_window = dynamic_cast<File_Opener_Window*>(windows[0]);
+        app_window = dynamic_cast<File_Opener_Window *>(windows[0]);
     }
-    
-    if(!app_window)
+
+    try
+    {
+    if (!app_window)
     {
         app_window = create_appwindow();
     }
 
-    for( const auto& file: files)
+    for (const auto &file : files)
     {
         app_window->open_file_view(file);
     }
     app_window->present();
+    }
+    catch(const Glib::Error &er)
+    {
+        std::cerr << "File_Opener::on_open(): " << er.what() << std::endl;
+    }
+    catch(const std::exception &ex)
+    {
+        std::cerr << "File_Opener::on_open(): " << ex.what() << std::endl;
+    }
 }
 
 void File_Opener::on_hide_window(Gtk::Window *window)
