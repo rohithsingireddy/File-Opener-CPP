@@ -1,6 +1,20 @@
 {
     "tasks": [
         {
+            "type": "shell",
+            "label": "Resource build from window.ui",
+            "command": "glib-compile-resources",
+            "args":[
+                "--target=resources.c",
+                "--generate-source",
+                "${fileDirname}/file_opener.gresource.xml"
+            ],
+            "options": {
+                "cwd":"${fileDirname}"
+            },
+            "detail": "User defined task for generating resource file"
+        },
+        {
             "type": "cppbuild",
             "label": "C/C++: g++ build active file",
             "command": "/usr/bin/g++",
