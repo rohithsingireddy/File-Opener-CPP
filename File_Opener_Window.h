@@ -3,6 +3,8 @@
 
 #include <gtkmm/applicationwindow.h>
 #include <gtkmm/builder.h>
+#include <gtkmm/stack.h>
+#include <gtkmm/stackswitcher.h>
 
 class File_Opener_Window : public Gtk::ApplicationWindow
 {
@@ -16,6 +18,7 @@ public:
 
 protected:
     Glib::RefPtr<Gtk::Builder> m_refBuilder;
+    Gtk::Stack *m_stack;
 };
 
 #endif /* GTK_FILE_OPENER_WINDOW_GUARD */

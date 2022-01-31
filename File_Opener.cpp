@@ -1,6 +1,5 @@
 #include <iostream>
 #include <exception>
-
 #include "File_Opener.h"
 #include "File_Opener_Window.cpp"
 
@@ -58,22 +57,22 @@ void File_Opener::on_open(
 
     try
     {
-    if (!app_window)
-    {
-        app_window = create_appwindow();
-    }
+        if (!app_window)
+        {
+            app_window = create_appwindow();
+        }
 
-    for (const auto &file : files)
-    {
-        app_window->open_file_view(file);
+        for (const auto &file : files)
+        {
+            app_window->open_file_view(file);
+        }
+        app_window->present();
     }
-    app_window->present();
-    }
-    catch(const Glib::Error &er)
+    catch (const Glib::Error &er)
     {
         std::cerr << "File_Opener::on_open(): " << er.what() << std::endl;
     }
-    catch(const std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cerr << "File_Opener::on_open(): " << ex.what() << std::endl;
     }
