@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <schema path="/org/mt/fileopener/" id="org.mt.fileopener">
+        
+        <key name="font" type="s">
+            <default>'Monospace 12'</default>
+            <summary>Font</summary>
+            <description>The default font</description>
+        </key>
+        
+        <key name="transition" type="s">
+            <choices>
+                <choice value='none'/>
+                <choice value='crossfade'/>
+                <choice value='slide-left-right'/>
+            </choices>
+            <default>'none'</default>
+            <summary>Transition</summary>
+            <description>The transition used when tabs are switched</description>
+        </key>
+
+    </schema>
+</schemalist>
