@@ -8,13 +8,29 @@ File_Opener_Window::File_Opener_Window(
     const Glib::RefPtr<Gtk::Builder> &refBuilder)
     : Gtk::ApplicationWindow(cobject),
       m_refBuilder(refBuilder),
-      m_stack(nullptr)
+      m_stack(nullptr),
+      m_gears(nullptr)
 {
     m_stack = m_refBuilder->get_widget<Gtk::Stack>("stack");
     if (!m_stack)
     {
         throw std::runtime_error("No \"stack\" object in window.ui");
     }
+
+    m_gears = m_refBuilder->get_widget<Gtk::MenuButton>("gears");
+    if( !m_gears )
+    {
+        throw std::runtime_error("No \"gears\" object in window.ui");
+    }
+
+    auto menu_builder = Gtk::Builder::create_from_resource("/org/mt/fileopener/gears_menu.ui");
+    auto menu = menu_builder->get_object<Gio::MenuModel>("menu");
+    if(!menu)
+    {
+        throw std::runtime_error("No \"menu\" object in gears_menu.ui");
+    }
+
+    m_gears->set_menu_model(menu);
 }
 
 File_Opener_Window *File_Opener_Window::create()

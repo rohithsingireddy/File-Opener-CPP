@@ -44,6 +44,24 @@ void File_Opener::on_activate()
     }
 }
 
+void File_Opener::on_startup()
+{
+    Gtk::Application::on_startup();
+
+    add_action(
+        "preferences",
+        sigc::mem_fun(
+            *this,
+            &File_Opener::on_action_preferences));
+
+    add_action(
+        "quit",
+        sigc::mem_fun(
+            *this,
+            &File_Opener::on_action_quit));
+    set_accel_for_action("app.quit", "<Ctrl>Q");
+}
+
 void File_Opener::on_open(
     const Gio::Application::type_vec_files &files,
     const Glib::ustring &)
@@ -81,4 +99,19 @@ void File_Opener::on_open(
 void File_Opener::on_hide_window(Gtk::Window *window)
 {
     delete window;
+}
+
+void File_Opener::on_action_preferences()
+{
+
+}
+
+void File_Opener::on_action_quit()
+{
+    auto windows = get_windows();
+    for( auto window : windows)
+    {
+        window->hide();
+    }
+    quit();
 }
