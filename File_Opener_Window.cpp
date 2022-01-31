@@ -33,14 +33,13 @@ void File_Opener_Window::open_file_view(const Glib::RefPtr<Gio::File> &file)
 {
     const Glib::ustring basename = file->get_basename();
     
-    auto scrolled = Gtk::make_managed<Gtk::ScrolledWindow>();
-    scrolled->set_expand(true);
-    
     auto view = Gtk::make_managed<Gtk::TextView>();
     view->set_editable(false);
     view->set_cursor_visible(false);
-    // view->set_margin(5);
+    view->set_margin(5);
     
+    auto scrolled = Gtk::make_managed<Gtk::ScrolledWindow>();
+    scrolled->set_expand(true);
     scrolled->set_child(*view);
     m_stack->add(*scrolled, basename, basename);
 
