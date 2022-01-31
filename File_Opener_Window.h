@@ -5,6 +5,7 @@
 #include <gtkmm/builder.h>
 #include <gtkmm/stack.h>
 #include <gtkmm/menubutton.h>
+#include <giomm/settings.h>
 
 class File_Opener_Window : public Gtk::ApplicationWindow
 {
@@ -18,6 +19,7 @@ public:
 
 protected:
     Glib::RefPtr<Gtk::Builder> m_refBuilder;
+    Glib::RefPtr<Gio::Settings> m_settings;
     Gtk::Stack *m_stack;
     Gtk::MenuButton *m_gears;
 };

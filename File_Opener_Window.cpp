@@ -23,6 +23,9 @@ File_Opener_Window::File_Opener_Window(
         throw std::runtime_error("No \"gears\" object in window.ui");
     }
 
+    m_settings = Gio::Settings::create("org.mt.fileopener");
+    m_settings->bind("transition", m_stack->property_transition_type());
+
     auto menu_builder = Gtk::Builder::create_from_resource("/org/mt/fileopener/gears_menu.ui");
     auto menu = menu_builder->get_object<Gio::MenuModel>("menu");
     if(!menu)
@@ -72,4 +75,13 @@ void File_Opener_Window::open_file_view(const Glib::RefPtr<Gio::File> &file)
         std::cerr << "File_Opener_Window::open_file_view(\"" << file->get_parse_name()
                     << "\"): " << er.what() << std::endl;
     }
+    
+    auto buffer = view->get_buffer();
+    auto tag = buffer->create_tag();
+    m_settings->bind("font", tag->property_font());
+    buffer->apply_tag(
+        tag,
+        buffer->begin(),
+        buffer->end()
+    );
 }

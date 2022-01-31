@@ -3,5 +3,6 @@
     <gresource prefix="/org/mt/fileopener">
         <file preprocess="xml-stripblanks">window.ui</file>
         <file preprocess="xml-stripblanks">gears_menu.ui</file>
+        <file preprocess="xml-stripblanks">prefs.ui</file>
     </gresource>
 </gresources>

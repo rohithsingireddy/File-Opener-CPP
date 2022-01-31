@@ -2,10 +2,11 @@
 #include <exception>
 #include "File_Opener.h"
 #include "File_Opener_Window.cpp"
+#include "File_Opener_Prefs.cpp"
 
 File_Opener::File_Opener()
     : Gtk::Application(
-          "org.mt.fileopener.app",
+          "org.mt.fileopener.application",
           Gio::Application::Flags::HANDLES_OPEN) {}
 
 Glib::RefPtr<File_Opener> File_Opener::create()
@@ -103,13 +104,32 @@ void File_Opener::on_hide_window(Gtk::Window *window)
 
 void File_Opener::on_action_preferences()
 {
+    try
+    {
+        auto prefs_dialog = File_Opener_Prefs::create(*get_active_window());
+        prefs_dialog->present();
 
+        prefs_dialog->signal_hide().connect(
+            sigc::bind(
+                sigc::mem_fun(
+                    *this,
+                    &File_Opener::on_hide_window),
+                prefs_dialog));
+    }
+    catch(const Glib::Error &er)
+    {
+        std::cerr << "File_Opener::on_action_preferences(): " << er.what() << std::endl;
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "File_Opener::on_action_preferences(): " << e.what() << std::endl;
+    }
 }
 
 void File_Opener::on_action_quit()
 {
     auto windows = get_windows();
-    for( auto window : windows)
+    for (auto window : windows)
     {
         window->hide();
     }
