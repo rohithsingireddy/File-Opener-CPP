@@ -2,6 +2,7 @@
 #include <iostream>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/textview.h>
+#include <giomm/propertyaction.h>
 #include "File_Opener_Window.h"
 #include "resources.c"
 
@@ -17,8 +18,10 @@ File_Opener_Window::File_Opener_Window(
       m_searchentry(nullptr),
       m_words(nullptr),
       m_sidebar(nullptr),
+      m_lines(nullptr),
+      m_lines_label(nullptr),
       m_settings(),
-      m_prop_binding()
+      m_binding_search_enabled()
 {
     m_stack = m_refBuilder->get_widget<Gtk::Stack>("stack");
     if (!m_stack)
@@ -62,6 +65,18 @@ File_Opener_Window::File_Opener_Window(
         throw std::runtime_error("No \"words\" object in window.ui");
     }
 
+    m_lines = m_refBuilder->get_widget<Gtk::Label>("lines");
+    if(!m_lines)
+    {
+        throw std::runtime_error("No \"lines\" in window.ui");
+    }
+
+    m_lines_label = m_refBuilder->get_widget<Gtk::Label>("lines_label");
+    if(!m_lines_label)
+    {
+        throw std::runtime_error("No \"lines_label\" in window.ui");
+    }
+
     auto menu_builder = Gtk::Builder::create_from_resource("/org/mt/fileopener/gears_menu.ui");
     auto menu = menu_builder->get_object<Gio::MenuModel>("menu");
     if (!menu)
@@ -70,10 +85,14 @@ File_Opener_Window::File_Opener_Window(
     }
     m_gears->set_menu_model(menu);
 
-    m_prop_binding = Glib::Binding::bind_property(
+    m_binding_search_enabled = Glib::Binding::bind_property(
         m_search->property_active(),
         m_searchbar->property_search_mode_enabled(),
         Glib::Binding::Flags::BIDIRECTIONAL);
+
+    m_binding_lines_visible = Glib::Binding::bind_property(
+        m_lines->property_visible(),
+        m_lines_label->property_visible());
 
     m_searchentry->signal_search_changed().connect(
         sigc::mem_fun(
@@ -95,6 +114,7 @@ File_Opener_Window::File_Opener_Window(
     m_settings->bind("show-words", m_sidebar->property_reveal_child());
 
     add_action(m_settings->create_action("show-words"));
+    add_action(Gio::PropertyAction::create("show-lines", m_lines->property_visible()));
 }
 
 File_Opener_Window *File_Opener_Window::create()
@@ -147,6 +167,7 @@ void File_Opener_Window::open_file_view(const Glib::RefPtr<Gio::File> &file)
 
     m_search->set_sensitive(true);
     update_words();
+    update_lines();
 }
 
 void File_Opener_Window::on_search_text_changed()
@@ -189,6 +210,7 @@ void File_Opener_Window::on_visible_child_changed()
 {
     m_searchbar->set_search_mode(false);
     update_words();
+    update_lines();
 }
 
 void File_Opener_Window::on_find_word(const Gtk::Button *button)
@@ -264,4 +286,34 @@ void File_Opener_Window::update_words()
         );
         m_words->append(*row);
     }
+}
+
+void File_Opener_Window::update_lines()
+{
+    auto tab = dynamic_cast<Gtk::ScrolledWindow *>(m_stack->get_visible_child());
+    if(!tab)
+    {
+        return;
+    }
+
+    auto view = dynamic_cast<Gtk::TextView*>(tab->get_child());
+    if(!view)
+    {
+        std::cerr << "File_Opener_Window::update_lines(): No visible text view" << std::endl;
+    }
+
+    auto buffer = view->get_buffer();
+
+    int count = 0;
+    auto iter = buffer->begin();
+    while(iter)
+    {
+        ++count;
+        if(!iter.forward_line())
+        {
+            break;
+        }
+    }
+
+    m_lines->set_text(Glib::ustring::format(count));
 }

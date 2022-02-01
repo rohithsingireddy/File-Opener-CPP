@@ -12,6 +12,7 @@
 #include <glibmm/binding.h>
 #include <gtkmm/revealer.h>
 #include <gtkmm/listbox.h>
+#include <gtkmm/label.h>
 
 class File_Opener_Window : public Gtk::ApplicationWindow
 {
@@ -29,10 +30,12 @@ protected:
     void on_find_word(const Gtk::Button *button);
     void on_reveal_child_changed();
     void update_words();
+    void update_lines();
 
     Glib::RefPtr<Gtk::Builder> m_refBuilder;
     Glib::RefPtr<Gio::Settings> m_settings;
-    Glib::RefPtr<Glib::Binding> m_prop_binding;
+    Glib::RefPtr<Glib::Binding> m_binding_search_enabled;
+    Glib::RefPtr<Glib::Binding> m_binding_lines_visible;
     Gtk::Stack *m_stack;
     Gtk::MenuButton *m_gears;
     Gtk::ToggleButton *m_search;
@@ -40,6 +43,8 @@ protected:
     Gtk::SearchEntry *m_searchentry;
     Gtk::Revealer *m_sidebar;
     Gtk::ListBox *m_words;
+    Gtk::Label *m_lines;
+    Gtk::Label *m_lines_label;
     
 };
 
