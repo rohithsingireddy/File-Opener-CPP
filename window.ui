@@ -7,25 +7,50 @@
         <property name="hide-on-close">True</property>
         <child type="titlebar">
             <object class="GtkHeaderBar" id="header">
+                
                 <child type="title">
                     <object class="GtkStackSwitcher" id="tabs">
                         <property name="stack">stack</property>
                     </object>
                 </child>
+                
                 <child type="end">
                     <object class="GtkMenuButton" id="gears">
                         <property name="direction">none</property>
                     </object>
                 </child>
+
+                <child type="end">
+                    <object class="GtkToggleButton" id="search">
+                        <property name="sensitive">False</property>
+                        <property name="icon-name">edit-find-symbolic</property>
+                    </object>
+                </child>
+            
             </object>
         </child>
         <child>
+
             <object class="GtkBox" id="content_box">
                 <property name="orientation">vertical</property>
+
                 <child>
-                    <object class="GtkStack" id="stack"/>
+                    <object class="GtkSearchBar" id="searchbar">
+                        <child>
+                            <object class="GtkSearchEntry" id="searchentry">
+                            </object>
+                        </child>
+                    </object>
                 </child>
+
+                <child>
+                    <object class="GtkStack" id="stack">
+                        <property name="transition-duration">500</property>
+                    </object>
+                </child>
+
             </object>
+
         </child>
     </object>
 </interface>
