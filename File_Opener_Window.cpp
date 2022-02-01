@@ -1,3 +1,5 @@
+#include <set>
+#include <iostream>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/textview.h>
 #include "File_Opener_Window.h"
@@ -10,10 +12,12 @@ File_Opener_Window::File_Opener_Window(
       m_refBuilder(refBuilder),
       m_stack(nullptr),
       m_gears(nullptr),
-      m_settings(),
       m_search(nullptr),
       m_searchbar(nullptr),
       m_searchentry(nullptr),
+      m_words(nullptr),
+      m_sidebar(nullptr),
+      m_settings(),
       m_prop_binding()
 {
     m_stack = m_refBuilder->get_widget<Gtk::Stack>("stack");
@@ -46,6 +50,18 @@ File_Opener_Window::File_Opener_Window(
         throw std::runtime_error("No \"searchbar\" object in window.ui");
     }
 
+    m_sidebar = m_refBuilder->get_widget<Gtk::Revealer>("sidebar");
+    if (!m_sidebar)
+    {
+        throw std::runtime_error("No \"sidebar\" object in window.ui");
+    }
+
+    m_words = m_refBuilder->get_widget<Gtk::ListBox>("words");
+    if (!m_words)
+    {
+        throw std::runtime_error("No \"words\" object in window.ui");
+    }
+
     auto menu_builder = Gtk::Builder::create_from_resource("/org/mt/fileopener/gears_menu.ui");
     auto menu = menu_builder->get_object<Gio::MenuModel>("menu");
     if (!menu)
@@ -64,6 +80,11 @@ File_Opener_Window::File_Opener_Window(
             *this,
             &File_Opener_Window::on_search_text_changed));
 
+    m_sidebar->property_reveal_child().signal_changed().connect(
+        sigc::mem_fun(
+            *this,
+            &File_Opener_Window::on_reveal_child_changed));
+
     m_stack->property_visible_child().signal_changed().connect(
         sigc::mem_fun(
             *this,
@@ -71,7 +92,9 @@ File_Opener_Window::File_Opener_Window(
 
     m_settings = Gio::Settings::create("org.mt.fileopener");
     m_settings->bind("transition", m_stack->property_transition_type());
+    m_settings->bind("show-words", m_sidebar->property_reveal_child());
 
+    add_action(m_settings->create_action("show-words"));
 }
 
 File_Opener_Window *File_Opener_Window::create()
@@ -121,8 +144,9 @@ void File_Opener_Window::open_file_view(const Glib::RefPtr<Gio::File> &file)
         tag,
         buffer->begin(),
         buffer->end());
-    
+
     m_search->set_sensitive(true);
+    update_words();
 }
 
 void File_Opener_Window::on_search_text_changed()
@@ -158,12 +182,86 @@ void File_Opener_Window::on_search_text_changed()
     {
         buffer->select_range(match_start, match_end);
         view->scroll_to(match_start);
-
     }
-
 }
 
 void File_Opener_Window::on_visible_child_changed()
 {
     m_searchbar->set_search_mode(false);
+    update_words();
+}
+
+void File_Opener_Window::on_find_word(const Gtk::Button *button)
+{
+    m_searchentry->set_text(button->get_label());
+}
+
+void File_Opener_Window::on_reveal_child_changed()
+{
+    update_words();
+}
+
+void File_Opener_Window::update_words()
+{
+    auto tab = dynamic_cast<Gtk::ScrolledWindow *>(m_stack->get_visible_child());
+    if(!tab)
+    {
+        return;
+    }
+
+    auto view = dynamic_cast<Gtk::TextView*>(tab->get_child());
+    if(!view)
+    {
+        std::cerr << "File_Opener_Window::update_words(): No visible text view" << std::endl;
+        return;
+    }
+
+    auto buffer = view->get_buffer();
+
+    std::set<Glib::ustring> words;
+    auto start = buffer->begin();
+    Gtk::TextIter end;
+    while (start)
+    {
+        while( start && !start.starts_word())
+        {
+            ++start;
+        }
+
+        if(!start)
+        {
+            break;
+        }
+
+        end = start;
+        end.forward_word_end();
+        if( start == end )
+        {
+            break;
+        }
+
+        auto word = buffer->get_text(start, end, false);
+        words.insert(word.lowercase());
+        start = end;
+    }
+
+    while( auto child = m_words->get_first_child() )
+    {
+        m_words->remove(*child);
+    }
+
+    for(const auto &word: words )
+    {
+        auto row = Gtk::make_managed<Gtk::Button>(word);
+        row->signal_clicked().connect(
+            sigc::bind(
+                sigc::mem_fun(
+                    *this,
+                    &File_Opener_Window::on_find_word
+                ),
+                row
+            )
+        );
+        m_words->append(*row);
+    }
 }
