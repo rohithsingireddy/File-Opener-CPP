@@ -2,6 +2,7 @@
 #include <iostream>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/textview.h>
+#include <gtkmm/icontheme.h>
 #include <giomm/propertyaction.h>
 #include "File_Opener_Window.h"
 #include "resources.c"
@@ -115,6 +116,9 @@ File_Opener_Window::File_Opener_Window(
 
     add_action(m_settings->create_action("show-words"));
     add_action(Gio::PropertyAction::create("show-lines", m_lines->property_visible()));
+
+    Gtk::IconTheme::get_for_display(get_display())->add_resource_path("/org/mt/fileopener");
+    set_icon_name("File_Opener_Icon");
 }
 
 File_Opener_Window *File_Opener_Window::create()
