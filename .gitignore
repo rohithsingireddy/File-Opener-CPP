@@ -1,1 +1,5 @@
 main
+
+schemas/schemas.compiled
+
+ui_resources/resources.c
