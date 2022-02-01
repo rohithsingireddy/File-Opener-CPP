@@ -19,5 +19,11 @@
             <description>The transition used when tabs are switched</description>
         </key>
 
+        <key name="show-words" type="b">
+            <default>false</default>
+            <summary>Show words</summary>
+            <description>Whether to show a word list in sidebar</description>
+        </key>
+
     </schema>
 </schemalist>
