@@ -8,6 +8,19 @@
         <child type="titlebar">
             <object class="GtkHeaderBar" id="header">
 
+                <child>
+                    <object class="GtkLabel" id="lines_label">
+                        <property name="visible">False</property>
+                        <property name="label" translatable="yes">Lines:</property>
+                    </object>
+                </child>
+
+                <child>
+                    <object class="GtkLabel" id="lines">
+                        <property name="visible">False</property>
+                    </object>
+                </child>
+
                 <child type="title">
                     <object class="GtkStackSwitcher" id="tabs">
                         <property name="stack">stack</property>
