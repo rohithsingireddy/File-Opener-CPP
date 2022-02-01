@@ -7,10 +7,10 @@
             "args": [
                 "--target=resources.c",
                 "--generate-source",
-                "${fileDirname}/file_opener.gresource.xml"
+                "${fileDirname}/ui_resources/file_opener.gresource.xml"
             ],
             "options": {
-                "cwd": "${fileDirname}"
+                "cwd": "${fileDirname}/ui_resources"
             },
             "detail": "User defined task for generating resource file"
         },
@@ -19,10 +19,10 @@
             "label": "Build settings schema",
             "command":"glib-compile-schemas",
             "args":[
-                "${fileDirname}/"
+                "${fileDirname}/schemas"
             ],
             "options":{
-                "cwd" :"${fileDirname}"
+                "cwd" :"${fileDirname}/schemas"
             },
             "detail":"User defined task for generating settings schema"
         },

@@ -5,7 +5,7 @@
 #include <gtkmm/icontheme.h>
 #include <giomm/propertyaction.h>
 #include "File_Opener_Window.h"
-#include "resources.c"
+#include "ui_resources/resources.c"
 
 File_Opener_Window::File_Opener_Window(
     BaseObjectType *cobject,

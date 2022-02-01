@@ -3,7 +3,7 @@
 
 int main(int argc, char **argv)
 {
-    Glib::setenv("GSETTINGS_SCHEMA_DIR", ".", false);
+    Glib::setenv("GSETTINGS_SCHEMA_DIR", "./schemas/", false);
     auto application = File_Opener::create();
     return application->run(argc, argv);
 }
