@@ -1,5 +1,5 @@
 main
 
-schemas/schemas.compiled
+schemas/gschemas.compiled
 
 ui_resources/resources.c
