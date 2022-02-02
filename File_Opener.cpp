@@ -19,6 +19,8 @@ File_Opener_Window *File_Opener::create_appwindow()
     auto app_window = File_Opener_Window::create();
     add_window(*app_window);
 
+    // Makes it possible for on_hide_window to be called 
+    // for the current window when it is hidden
     app_window->signal_hide().connect(
         sigc::bind(
             sigc::mem_fun(
@@ -54,6 +56,7 @@ void File_Opener::on_startup()
         sigc::mem_fun(
             *this,
             &File_Opener::on_action_preferences));
+    set_accel_for_action("app.preferences", "<Ctrl>P");
 
     add_action(
         "quit",

@@ -244,6 +244,7 @@ void File_Opener_Window::update_words()
 
     auto buffer = view->get_buffer();
 
+    // To store all words in alphabetical order
     std::set<Glib::ustring> words;
     auto start = buffer->begin();
     Gtk::TextIter end;
