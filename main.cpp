@@ -1,4 +1,4 @@
-#include "File_Opener.cpp"
+#include "File_Opener.h"
 #include <glibmm.h>
 
 int main(int argc, char **argv)

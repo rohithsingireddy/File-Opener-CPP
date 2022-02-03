@@ -1,8 +1,8 @@
 #include <iostream>
 #include <exception>
 #include "File_Opener.h"
-#include "File_Opener_Window.cpp"
-#include "File_Opener_Prefs.cpp"
+#include "File_Opener_Window.h"
+#include "File_Opener_Prefs.h"
 
 File_Opener::File_Opener()
     : Gtk::Application(
