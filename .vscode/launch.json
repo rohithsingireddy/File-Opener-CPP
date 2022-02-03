@@ -8,8 +8,8 @@
             "name": "g++ - Build and debug active file",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": [],
+            "program": "${fileDirname}/file_opener",
+            "args": ["main.cpp", "File_Opener_Window.cpp"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
@@ -23,6 +23,7 @@
                 }
             ],
             "preLaunchTask": "build",
+            "postDebugTask": "clean",
             "miDebuggerPath": "/usr/bin/gdb"
         }
     ]
