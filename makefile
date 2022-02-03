@@ -47,9 +47,10 @@ install-desktop-file:
 
 # For compiling schema file in system schema directory
 # First line in main.cpp main() should be commented for this
+# Not tested
 install-gschema-file:
 	if test -n "$(GSETTINGS_SCHEMA_DIR)" -a "$(GSETTINGS_SCHEMA_DIR)" != .; then \
 		mkdir -p "$(GSETTINGS_SCHEMA_DIR)"; \
-		cp org.gtkmm.exampleapp.gschema.xml "$(GSETTINGS_SCHEMA_DIR)"; \
+		cp schemas/org.mt.fileopener.gschema.xml "$(GSETTINGS_SCHEMA_DIR)"; \
 		$(GLIB_COMPILE_SCHEMAS) "$(GSETTINGS_SCHEMA_DIR)"; \
 	fi
