@@ -10,12 +10,12 @@ In VSCode, pressing `F5` on *main.cpp* would compile an executable named **main*
 In other environments, an executable can be compiled by executing the following commands in a shell under the directory where *main.cpp* is present after cloning.
 
 ```bash
-cd ./schemas/
-glib-compile-schemas .
-cd ../ui_resources/
-glib-compile-resources --target=resources.c --generate-source file_opener.gresource.xml
-g++ main.cpp -o main $(pkg-config gtkmm-4.0 --cflags --libs)
+make
+```
 
+To clean compiled files
+```bash
+make clean
 ```
 
 ## Notes
@@ -24,6 +24,10 @@ g++ main.cpp -o main $(pkg-config gtkmm-4.0 --cflags --libs)
 cd ./ui_resources/
 glib-compile-resources --target=resources.c --generate-source file_opener.gresources.xml
 ```
+**or**
+```bash
+make ui_resources.c
+```
 
 - Resources file should be generated whenever a file in **ui_resources** is changed.
 
@@ -31,6 +35,10 @@ glib-compile-resources --target=resources.c --generate-source file_opener.gresou
 ```bash
 cd ./schemas
 glib-compile-schemas .
+```
+**or**
+```bash
+make schemas/gschemas.compiled
 ```
 
 - Schema file should be generated whenever a file in **schemas** file should be generated
