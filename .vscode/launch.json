@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/file_opener",
-            "args": ["main.cpp", "File_Opener_Window.cpp"],
+            "args": ["fileToTest.txt"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
