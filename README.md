@@ -1,6 +1,6 @@
 # File Opener
 
-An application made with `gtkmm` graphic library in CPP. The application opens files passed at the command line in read-only mode. The files should be **UTF-8** compilant.
+An application made with `gtkmm` graphic library in CPP. The application opens files passed at the command line in read and write mode. The files should be **UTF-8** compilant.
 
 ![A screenshot of application](/misc/screenshot-1.png)
 
