@@ -5,6 +5,7 @@
 #include <gtkmm/icontheme.h>
 #include <giomm/propertyaction.h>
 #include "File_Opener_Window.h"
+#include "Custom_Text_View.h"
 
 File_Opener_Window::File_Opener_Window(
     BaseObjectType *cobject,
@@ -66,13 +67,13 @@ File_Opener_Window::File_Opener_Window(
     }
 
     m_lines = m_refBuilder->get_widget<Gtk::Label>("lines");
-    if(!m_lines)
+    if (!m_lines)
     {
         throw std::runtime_error("No \"lines\" in window.ui");
     }
 
     m_lines_label = m_refBuilder->get_widget<Gtk::Label>("lines_label");
-    if(!m_lines_label)
+    if (!m_lines_label)
     {
         throw std::runtime_error("No \"lines_label\" in window.ui");
     }
@@ -116,6 +117,12 @@ File_Opener_Window::File_Opener_Window(
     add_action(m_settings->create_action("show-words"));
     add_action(Gio::PropertyAction::create("show-lines", m_lines->property_visible()));
 
+    add_action(
+        "save",
+        sigc::mem_fun(
+            *this,
+            &File_Opener_Window::save_file_view));
+
     Gtk::IconTheme::get_for_display(get_display())->add_resource_path("/org/mt/fileopener");
     set_icon_name("File_Opener_Icon");
 }
@@ -136,9 +143,9 @@ void File_Opener_Window::open_file_view(const Glib::RefPtr<Gio::File> &file)
 {
     const Glib::ustring basename = file->get_basename();
 
-    auto view = Gtk::make_managed<Gtk::TextView>();
-    view->set_editable(false);
-    view->set_cursor_visible(false);
+    auto view = Gtk::make_managed<Custom_Text_View>(file);
+    // view->set_editable(false);
+    // view->set_cursor_visible(false);
     view->set_margin(5);
 
     auto scrolled = Gtk::make_managed<Gtk::ScrolledWindow>();
@@ -162,6 +169,10 @@ void File_Opener_Window::open_file_view(const Glib::RefPtr<Gio::File> &file)
 
     auto buffer = view->get_buffer();
     auto tag = buffer->create_tag();
+    buffer->signal_changed().connect(
+        sigc::mem_fun(
+            *this,
+            &File_Opener_Window::on_buffer_change));
     m_settings->bind("font", tag->property_font());
     buffer->apply_tag(
         tag,
@@ -171,6 +182,61 @@ void File_Opener_Window::open_file_view(const Glib::RefPtr<Gio::File> &file)
     m_search->set_sensitive(true);
     update_words();
     update_lines();
+}
+
+void File_Opener_Window::on_buffer_change()
+{
+    auto tab = dynamic_cast<Gtk::ScrolledWindow *>(m_stack->get_visible_child());
+    if (!tab)
+    {
+        std::cerr << "File_Opener_Window::save_file_view(): No visible child" << std::endl;
+    }
+    auto view = dynamic_cast<Custom_Text_View *>(tab->get_child());
+    if (!view)
+    {
+        std::cerr << "File_Opener_Window::on_search_text_changed(): No visible custom text view. " << std::endl;
+        return;
+    }
+
+    auto buffer = view->get_buffer();
+    auto tag = buffer->create_tag();
+    m_settings->bind("font", tag->property_font());
+    buffer->apply_tag(
+        tag,
+        buffer->begin(),
+        buffer->end());
+}
+
+void File_Opener_Window::save_file_view()
+{
+    auto tab = dynamic_cast<Gtk::ScrolledWindow *>(m_stack->get_visible_child());
+    if (!tab)
+    {
+        std::cerr << "File_Opener_Window::save_file_view(): No visible child" << std::endl;
+        return;
+    }
+
+    auto view = dynamic_cast<Custom_Text_View *>(tab->get_child());
+    if (!view)
+    {
+        std::cerr << "File_Opener_Window::on_search_text_changed(): No visible custom text view. " << std::endl;
+        return;
+    }
+
+    auto buffer = view->get_buffer();
+    auto file = view->get_file_pointer();
+    try
+    {
+        file->replace_contents(
+            buffer->get_text(),
+            view->old_etag,
+            view->new_etag);
+        view->old_etag = view->new_etag;
+    }
+    catch (std::exception &e)
+    {
+        std::cerr << "File_Opener_Window::save_file_view(): " << e.what() << std::endl;
+    }
 }
 
 void File_Opener_Window::on_search_text_changed()
@@ -188,10 +254,10 @@ void File_Opener_Window::on_search_text_changed()
         return;
     }
 
-    auto view = dynamic_cast<Gtk::TextView *>(tab->get_child());
+    auto view = dynamic_cast<Custom_Text_View *>(tab->get_child());
     if (!view)
     {
-        std::cerr << "File_Opener_Window::on_search_text_changed(): No visible text view. " << std::endl;
+        std::cerr << "File_Opener_Window::on_search_text_changed(): No visible custom text view. " << std::endl;
         return;
     }
 
@@ -229,15 +295,15 @@ void File_Opener_Window::on_reveal_child_changed()
 void File_Opener_Window::update_words()
 {
     auto tab = dynamic_cast<Gtk::ScrolledWindow *>(m_stack->get_visible_child());
-    if(!tab)
+    if (!tab)
     {
         return;
     }
 
-    auto view = dynamic_cast<Gtk::TextView*>(tab->get_child());
-    if(!view)
+    auto view = dynamic_cast<Custom_Text_View *>(tab->get_child());
+    if (!view)
     {
-        std::cerr << "File_Opener_Window::update_words(): No visible text view" << std::endl;
+        std::cerr << "File_Opener_Window::update_words(): No visible custom text view" << std::endl;
         return;
     }
 
@@ -249,19 +315,19 @@ void File_Opener_Window::update_words()
     Gtk::TextIter end;
     while (start)
     {
-        while( start && !start.starts_word())
+        while (start && !start.starts_word())
         {
             ++start;
         }
 
-        if(!start)
+        if (!start)
         {
             break;
         }
 
         end = start;
         end.forward_word_end();
-        if( start == end )
+        if (start == end)
         {
             break;
         }
@@ -271,23 +337,20 @@ void File_Opener_Window::update_words()
         start = end;
     }
 
-    while( auto child = m_words->get_first_child() )
+    while (auto child = m_words->get_first_child())
     {
         m_words->remove(*child);
     }
 
-    for(const auto &word: words )
+    for (const auto &word : words)
     {
         auto row = Gtk::make_managed<Gtk::Button>(word);
         row->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(
                     *this,
-                    &File_Opener_Window::on_find_word
-                ),
-                row
-            )
-        );
+                    &File_Opener_Window::on_find_word),
+                row));
         m_words->append(*row);
     }
 }
@@ -295,25 +358,25 @@ void File_Opener_Window::update_words()
 void File_Opener_Window::update_lines()
 {
     auto tab = dynamic_cast<Gtk::ScrolledWindow *>(m_stack->get_visible_child());
-    if(!tab)
+    if (!tab)
     {
         return;
     }
 
-    auto view = dynamic_cast<Gtk::TextView*>(tab->get_child());
-    if(!view)
+    auto view = dynamic_cast<Custom_Text_View *>(tab->get_child());
+    if (!view)
     {
-        std::cerr << "File_Opener_Window::update_lines(): No visible text view" << std::endl;
+        std::cerr << "File_Opener_Window::update_lines(): No visible custom text view" << std::endl;
     }
 
     auto buffer = view->get_buffer();
 
     int count = 0;
     auto iter = buffer->begin();
-    while(iter)
+    while (iter)
     {
         ++count;
-        if(!iter.forward_line())
+        if (!iter.forward_line())
         {
             break;
         }

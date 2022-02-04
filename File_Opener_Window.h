@@ -4,6 +4,7 @@
 #include <gtkmm/applicationwindow.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/stack.h>
+#include <gtkmm/stackswitcher.h>
 #include <gtkmm/menubutton.h>
 #include <giomm/settings.h>
 #include <gtkmm/searchbar.h>
@@ -36,6 +37,11 @@ public:
      * The files should be UTF-8 compilant
      */ 
     void open_file_view(const Glib::RefPtr<Gio::File> &file);
+
+    /**
+     * Saves the contents of the file currently in view
+     */
+    void save_file_view(); 
 
 protected:
     /**
@@ -73,6 +79,11 @@ protected:
      * selected for view
      */ 
     void update_lines();
+
+    /**
+     * Updates the buffer font
+     */
+    void on_buffer_change(); 
 
     //Contains pointer to a builder object created from window.ui
     Glib::RefPtr<Gtk::Builder> m_refBuilder;
