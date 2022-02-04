@@ -2,6 +2,7 @@
 #define GTK_FILE_OPENER_INCLUDE_GUARD
 
 #include <gtkmm/application.h>
+#include <gtkmm/filechooserdialog.h>
 
 class File_Opener_Window;
 
@@ -33,6 +34,17 @@ private:
      * Called whenever Quit option is clicked or "<Ctrl>Q" is pressed
      */ 
     void on_action_quit();
+
+    /**
+     * Opens a file in the application
+     */
+    void open_file(); 
+
+    /**
+     * Opens the file selected through
+     * FileChooserDialog
+     */
+    void on_file_choose(int response_id, Gtk::FileChooserDialog *dialog); 
 
 protected:
     /**
