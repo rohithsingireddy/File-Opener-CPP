@@ -19,7 +19,7 @@ File_Opener_Window *File_Opener::create_appwindow()
     auto app_window = File_Opener_Window::create();
     add_window(*app_window);
 
-    // Makes it possible for on_hide_window to be called 
+    // Makes it possible for on_hide_window to be called
     // for the current window when it is hidden
     app_window->signal_hide().connect(
         sigc::bind(
@@ -64,6 +64,8 @@ void File_Opener::on_startup()
             *this,
             &File_Opener::on_action_quit));
     set_accel_for_action("app.quit", "<Ctrl>Q");
+    
+    set_accel_for_action("win.save", "<Ctrl>S");
 }
 
 void File_Opener::on_open(
@@ -119,7 +121,7 @@ void File_Opener::on_action_preferences()
                     &File_Opener::on_hide_window),
                 prefs_dialog));
     }
-    catch(const Glib::Error &er)
+    catch (const Glib::Error &er)
     {
         std::cerr << "File_Opener::on_action_preferences(): " << er.what() << std::endl;
     }
