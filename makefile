@@ -1,8 +1,8 @@
 PROGRAM = file_opener
 RESOURCE_FILE = ui_resources/file_opener.gresource.xml
-DEPS = File_Opener.h File_Opener_Window.h File_Opener_Prefs.h
-CXXFILES = main.cpp File_Opener.cpp File_Opener_Window.cpp File_Opener_Prefs.cpp
-OFILES = ui_resources/resources.o File_Opener_Window.o File_Opener_Prefs.o File_Opener.o main.o
+DEPS = File_Opener.h File_Opener_Window.h File_Opener_Prefs.h Custom_Text_View.h
+CXXFILES = main.cpp File_Opener.cpp File_Opener_Window.cpp File_Opener_Prefs.cpp Custom_Text_View.cpp
+OFILES = ui_resources/resources.o Custom_Text_View.o File_Opener_Window.o File_Opener_Prefs.o File_Opener.o main.o
 SETTING_SCHEMA = schemas/gschemas.compiled
 CFLAGS = $(shell pkg-config --cflags --libs gtkmm-4.0)
 
