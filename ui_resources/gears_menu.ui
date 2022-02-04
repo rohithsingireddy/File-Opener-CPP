@@ -4,6 +4,16 @@
         <section>
 
             <item>
+                <attribute name="label" translatable="yes">_Open</attribute>
+                <attribute name="action">app.open</attribute>
+            </item>
+
+            <item>
+                <attribute name="label" translatable="yes">_Save</attribute>
+                <attribute name="action">win.save</attribute>
+            </item>
+
+            <item>
                 <attribute name="label" translatable="yes">_Words</attribute>
                 <attribute name="action">win.show-words</attribute>
             </item>
@@ -13,10 +23,6 @@
                 <attribute name="action">win.show-lines</attribute>
             </item>
 
-            <item>
-                <attribute name="label" translatable="yes">_Save</attribute>
-                <attribute name="action">win.save</attribute>
-            </item>
 
             <item>
                 <attribute name="label" translatable="yes">_Preferences</attribute>
