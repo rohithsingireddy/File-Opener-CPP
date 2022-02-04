@@ -3,3 +3,5 @@ main
 schemas/gschemas.compiled
 
 ui_resources/resources.c
+
+fileToTest.txt
