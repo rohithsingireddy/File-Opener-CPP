@@ -35,7 +35,7 @@ clean:
 	rm -f $(OFILES)
 	rm -f ui_resources/resources.c
 	rm -f schemas/gschemas.compiled
-	rm -f file_opener
+	rm -f $(PROGRAM)
 
 # Installs the application on the desktop
 # Not tested

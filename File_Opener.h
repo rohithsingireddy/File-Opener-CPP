@@ -54,7 +54,7 @@ protected:
 
     /**
      * Overriedes the parent Gtk::Application on_startup
-     * and is called at startup of application before activate
+     * and is called at startup of application after activate
      */ 
     void on_startup() override;
     
