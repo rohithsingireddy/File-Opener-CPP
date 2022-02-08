@@ -1,3 +1,6 @@
+#ifndef CUSTOM_TEXT_VIEW_GUARD
+#define CUSTOM_TEXT_VIEW_GUARD
+
 #include <gtkmm/textview.h>
 
 class Custom_Text_View: public Gtk::TextView 
@@ -23,3 +26,5 @@ class Custom_Text_View: public Gtk::TextView
          */ 
         Glib::RefPtr<Gio::File> get_file_pointer();
 };
+
+#endif /* CUSTOM_TEXT_VIEW_GUARD */

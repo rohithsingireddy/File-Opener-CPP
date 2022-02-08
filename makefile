@@ -1,4 +1,4 @@
-PROGRAM = file_editor
+PROGRAM = file_editor.app
 RESOURCE_FILE = ui_resources/file_opener.gresource.xml
 DEPS = File_Opener.h File_Opener_Window.h File_Opener_Prefs.h Custom_Text_View.h
 CXXFILES = main.cpp File_Opener.cpp File_Opener_Window.cpp File_Opener_Prefs.cpp Custom_Text_View.cpp
@@ -10,7 +10,7 @@ CFLAGS = $(shell pkg-config --cflags --libs gtkmm-4.0)
 all: $(PROGRAM) $(SETTING_SCHEMA)
 
 # Compiles an executable with name 'file_opener'
-file_editor : $(OFILES)
+file_editor.app : $(OFILES)
 	g++ $(OFILES) $(CFLAGS) -o $@
 
 # Compiles source files for all cpp files
@@ -35,7 +35,7 @@ clean:
 	rm -f $(OFILES)
 	rm -f ui_resources/resources.c
 	rm -f schemas/gschemas.compiled
-	rm -f $(PROGRAM)
+	# rm -f $(PROGRAM)
 
 # Installs the application on the desktop
 # Not tested

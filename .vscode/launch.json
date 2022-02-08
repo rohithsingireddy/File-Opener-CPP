@@ -8,7 +8,7 @@
             "name": "g++ - Build and debug active file",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}/file_editor",
+            "program": "${fileDirname}/file_editor.app",
             "args": ["fileToTest.txt"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
